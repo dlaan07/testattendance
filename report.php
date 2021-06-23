@@ -35,39 +35,17 @@ if ($id) {
     }
 }
 
-// Check login and get context.
-require_login($course, false, $cm);
-$context = context_module::instance($cm->id);
-require_capability('mod/testattendance:view', $context);
+// // Check login and get context.
+// require_login($course, false, $cm);
+// $context = context_module::instance($cm->id);
+// require_capability('mod/testattendance:view', $context);
 
-$PAGE->set_url('/mod/testattendance/view.php', array('id' => $cm->id));
+$PAGE->set_url('/mod/testattendance/report.php');
 $PAGE->set_title(get_string('pluginname', 'testattendance'));
 $PAGE->set_heading(get_string('pluginname', 'testattendance'));
 
-$reportlink = new moodle_url('/mod/testattendance/report.php');
-$submissionlink = new moodle_url('/mod/testattendance/submission.php');
-
-$attendancename = $DB->get_record('testattendance', array('id' => 2), $fields = '*');
-// $attendances = $DB->get_records('testattendance', array('id' => $id), $sort = '', $fields = '*');
-
 echo $OUTPUT->header();
 
-echo $OUTPUT->heading($attendancename->name);
-echo html_writer::tag('p', $attendancename->intro);
-
-if (has_capability('mod/testattendance:report', $context)) {
-    echo html_writer::tag('button', "View Report", [
-        // 'href' => $reportlink,
-        'onclick' => "location.href = '$reportlink'",
-        'class' => "btn btn-primary",
-    ]);
-}
-
-if (has_capability('mod/testattendance:submit', $context)) {
-    echo html_writer::tag('button', "Take attendance", [
-        'onclick' => "location.href = '$submissionlink'",
-        'class' => "btn btn-primary",
-    ]);
-}
+echo $OUTPUT->heading("REPORT");
 
 echo $OUTPUT->footer();
