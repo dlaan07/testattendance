@@ -52,16 +52,16 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading($attendancename->name);
 echo html_writer::tag('p', $attendancename->intro);
 
-echo html_writer::tag('button', "Take attendance", [
-    'class' => "btn btn-primary",
-]);
-
 if (has_capability('mod/testattendance:report', $context)) {
-    // code...
+    echo html_writer::tag('button', "View Report", [
+        'class' => "btn btn-primary",
+    ]);
 }
 
 if (has_capability('mod/testattendance:submit', $context)) {
-    // code...
+    echo html_writer::tag('button', "Take attendance", [
+        'class' => "btn btn-primary",
+    ]);
 }
 
 echo $OUTPUT->footer();
