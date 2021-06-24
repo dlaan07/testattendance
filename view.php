@@ -18,13 +18,21 @@
  * File.
  *
  * @package    core
- * @copyright  2021 
+ * @copyright  2021
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
 require_once(__DIR__ . '/../../config.php');
+require_login();
+if (isguestuser()) {
+    print_error('noguest');
+}
+
+global $DB;
+global $USER;
 
 $id = optional_param('id', 0, PARAM_INT); // Course Module ID, or ...
+$a = optional_param('a',  0, PARAM_INT);  // Attendance instance ID.
 
 if ($id) {
     if (!$cm = get_coursemodule_from_id('testattendance', $id)) {
@@ -35,6 +43,9 @@ if ($id) {
     }
 }
 
+$attendance = $DB->get_record('testattendance', array('id' => $cm->instance), '*', MUST_EXIST);
+$attendanceid = $attendance->id;
+
 // Check login and get context.
 require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
@@ -44,28 +55,26 @@ $PAGE->set_url('/mod/testattendance/view.php', array('id' => $cm->id));
 $PAGE->set_title(get_string('pluginname', 'testattendance'));
 $PAGE->set_heading(get_string('pluginname', 'testattendance'));
 
-$reportlink = new moodle_url('/mod/testattendance/report.php');
-$submissionlink = new moodle_url('/mod/testattendance/submission.php');
+// creating URL for report and submission
+$reporturl = new moodle_url('/mod/testattendance/report.php', ['attendanceid' => $attendanceid]);
+$submissionurl = new moodle_url('/mod/testattendance/submission.php', ['attendanceid' => $attendanceid, 'studentid' => $USER->id]);
 
-$attendancename = $DB->get_record('testattendance', array('id' => 2), $fields = '*');
-// $attendances = $DB->get_records('testattendance', array('id' => $id), $sort = '', $fields = '*');
-
+// Outputting the view
 echo $OUTPUT->header();
 
-echo $OUTPUT->heading($attendancename->name);
-echo html_writer::tag('p', $attendancename->intro);
+echo $OUTPUT->heading($attendance->name);
+echo html_writer::tag('p', $attendance->intro);
 
 if (has_capability('mod/testattendance:report', $context)) {
     echo html_writer::tag('button', "View Report", [
-        // 'href' => $reportlink,
-        'onclick' => "location.href = '$reportlink'",
+        'onclick' => "location.href = '$reporturl'",
         'class' => "btn btn-primary",
     ]);
 }
 
 if (has_capability('mod/testattendance:submit', $context)) {
     echo html_writer::tag('button', "Take attendance", [
-        'onclick' => "location.href = '$submissionlink'",
+        'onclick' => "location.href = '$submissionurl'",
         'class' => "btn btn-primary",
     ]);
 }

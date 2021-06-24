@@ -26,9 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 function testattendance_add_instance($testattendance) {
     global $DB;
-    // print_r($testattendance);
-    // echo "<br>";
-    // echo $testattendance->timeopen;
+
     $testattendance->timemodified = time();
     $testattendance->id = $DB->insert_record('testattendance', $testattendance);
 
