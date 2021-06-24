@@ -32,7 +32,6 @@ global $DB;
 global $USER;
 
 $id = optional_param('id', 0, PARAM_INT); // Course Module ID, or ...
-$a = optional_param('a',  0, PARAM_INT);  // Attendance instance ID.
 
 if ($id) {
     if (!$cm = get_coursemodule_from_id('testattendance', $id)) {
@@ -51,11 +50,12 @@ require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/testattendance:view', $context);
 
+// Setting page properties
 $PAGE->set_url('/mod/testattendance/view.php', array('id' => $cm->id));
 $PAGE->set_title(get_string('pluginname', 'testattendance'));
 $PAGE->set_heading(get_string('pluginname', 'testattendance'));
 
-// creating URL for report and submission
+// Creating URL for report and submission
 $reporturl = new moodle_url('/mod/testattendance/report.php', ['attendanceid' => $attendanceid]);
 $submissionurl = new moodle_url('/mod/testattendance/submission.php', ['attendanceid' => $attendanceid, 'studentid' => $USER->id]);
 
