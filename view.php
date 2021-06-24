@@ -44,6 +44,8 @@ if ($id) {
 
 $attendance = $DB->get_record('testattendance', array('id' => $cm->instance), '*', MUST_EXIST);
 $attendanceid = $attendance->id;
+$attendancetimeopen = $attendance->timeopen;
+$attendancetimeclose = $attendance->timeclose;
 
 // Check login and get context.
 require_login($course, false, $cm);
@@ -57,7 +59,7 @@ $PAGE->set_heading(get_string('pluginname', 'testattendance'));
 
 // Creating URL for report and submission
 $reporturl = new moodle_url('/mod/testattendance/report.php', ['attendanceid' => $attendanceid]);
-$submissionurl = new moodle_url('/mod/testattendance/submission.php', ['attendanceid' => $attendanceid, 'studentid' => $USER->id]);
+$submissionurl = new moodle_url('/mod/testattendance/submission.php', ['id' => $cm->id, 'attendanceid' => $attendanceid]);
 
 // Outputting the view
 echo $OUTPUT->header();
@@ -66,17 +68,26 @@ echo $OUTPUT->heading($attendance->name);
 echo html_writer::tag('p', $attendance->intro);
 
 if (has_capability('mod/testattendance:report', $context)) {
-    echo html_writer::tag('button', "View Report", [
-        'onclick' => "location.href = '$reporturl'",
+    echo html_writer::tag('a', "View Report", [
+        'href' => $reporturl,
         'class' => "btn btn-primary",
     ]);
 }
 
 if (has_capability('mod/testattendance:submit', $context)) {
-    echo html_writer::tag('button', "Take attendance", [
-        'onclick' => "location.href = '$submissionurl'",
-        'class' => "btn btn-primary",
-    ]);
+    $now = time();
+    if ($now >= $attendancetimeopen and $now < $attendancetimeopen) {
+        echo html_writer::tag('a', "Take attendance", [
+            'href' => $submissionurl,
+            'class' => "btn btn-primary",
+        ]);
+    } else {
+        echo html_writer::tag('p', 'This attendance has been closed');
+        echo html_writer::tag('a', "Take attendance", [
+            'href' => $submissionurl,
+            'class' => "disabled btn btn-primary",
+        ]);
+    }
 }
 
 echo $OUTPUT->footer();
