@@ -68,10 +68,18 @@ echo $OUTPUT->heading($attendance->name);
 echo html_writer::tag('p', $attendance->intro);
 
 if (has_capability('mod/testattendance:report', $context)) {
-    echo html_writer::tag('a', "View Report", [
-        'href' => $reporturl,
-        'class' => "btn btn-primary",
-    ]);
+    $doeslogexist = $DB->record_exists('testattendance_logs', array('attendanceid' => $attendanceid));
+    // $doeslogexist = false;
+    if ($doeslogexist) {
+        echo html_writer::tag('p', 'Absent:');
+        echo html_writer::tag('p', 'Present:');
+        echo html_writer::tag('a', "View Report", [
+            'href' => $reporturl,
+            'class' => "btn btn-primary",
+        ]);
+    } else {
+        echo html_writer::tag('p', 'No one has taken this attendance yet.');
+    }
 }
 
 if (has_capability('mod/testattendance:submit', $context)) {

@@ -51,8 +51,8 @@ $PAGE->set_heading(get_string('pluginname', 'testattendance'));
 
 //Check for existing attendance
 
-$isattendanceexist = $DB->record_exists('testattendance_logs', array('userid' => $USER->id));
-if (!$isattendanceexist) {
+$doesattendanceexist = $DB->record_exists('testattendance_logs', array('userid' => $USER->id));
+if (!$doesattendanceexist) {
     //Insert data to DB
     $record = new stdClass();
     $record->attendanceid = $attendanceid;
@@ -68,10 +68,10 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading("SUBMISSION");
 
 echo $USER->id;
-echo $isattendanceexist;
+echo $doesattendanceexist;
 echo $course->id;
 
-if (!$isattendanceexist) {
+if (!$doesattendanceexist) {
     echo html_writer::tag('p', 'You haven\'t taken this attendance yet, click the button below to submit your attendance now.');
     echo html_writer::tag('a', 'Submit attendance', [
         'href' => '',
