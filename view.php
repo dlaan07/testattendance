@@ -58,7 +58,8 @@ $PAGE->set_title(get_string('pluginname', 'testattendance'));
 $PAGE->set_heading(get_string('pluginname', 'testattendance'));
 
 // Creating URL for report and submission
-$reporturl = new moodle_url('/mod/testattendance/report.php', ['attendanceid' => $attendanceid]);
+// $reporturl = new moodle_url('/mod/testattendance/report.php', ['attendanceid' => $attendanceid]);
+$reporturl = new moodle_url('/mod/testattendance/report.php', ['id' => $cm->id]);
 $submissionurl = new moodle_url('/mod/testattendance/submission.php', ['id' => $cm->id, 'attendanceid' => $attendanceid]);
 
 // Outputting the view
@@ -71,8 +72,9 @@ if (has_capability('mod/testattendance:report', $context)) {
     $doeslogexist = $DB->record_exists('testattendance_logs', array('attendanceid' => $attendanceid));
     // $doeslogexist = false;
     if ($doeslogexist) {
+        $presents = $DB->get_records('testattendance_logs', array('attendanceid' => $attendanceid, 'status' => 1), '', '*');
         echo html_writer::tag('p', 'Absent:');
-        echo html_writer::tag('p', 'Present:');
+        echo html_writer::tag('p', 'Present: '.count($presents));
         echo html_writer::tag('a', "View Report", [
             'href' => $reporturl,
             'class' => "btn btn-primary",
