@@ -36,5 +36,7 @@ $PAGE->set_pagelayout('incourse');
 context_course::instance($course->id);
 require_capability('mod/attendance:view', $context);
 
-
+echo $OUTPUT->header();
+echo $OUTPUT->heading("Index");
 echo "TEST";
+echo $OUTPUT->footer();
