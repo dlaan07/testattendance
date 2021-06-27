@@ -26,8 +26,7 @@ defined('MOODLE_INTERNAL') || die();
 
 global $ADMIN;
 
-if ($hassiteconfig)
-{
+if ($hassiteconfig) {
     $settings->add(new admin_setting_configcheckbox('testattendance/showinblock',
         get_string('showinblock', 'testattendance'), get_string('showinblock_desc', 'testattendance'), 1));
 }
