@@ -35,17 +35,44 @@ if ($id) {
     }
 }
 
-// // Check login and get context.
-// require_login($course, false, $cm);
-// $context = context_module::instance($cm->id);
-// require_capability('mod/testattendance:view', $context);
+// Check login and get context.
+require_login($course, false, $cm);
+$context = context_module::instance($cm->id);
+require_capability('mod/testattendance:report', $context);
 
 $PAGE->set_url('/mod/testattendance/report.php');
 $PAGE->set_title(get_string('pluginname', 'testattendance'));
 $PAGE->set_heading(get_string('pluginname', 'testattendance'));
 
+$attendancedata = $DB->get_records('testattendance_logs', array('attendanceid' => $cm->instance), '', '*');
+
+$reporttable = new html_table();
+
 echo $OUTPUT->header();
 
 echo $OUTPUT->heading("REPORT");
+
+$headerfirstname = new html_table_cell('First Name');
+$headerlastname = new html_table_cell('Last Name');
+$headerstatus = new html_table_cell('Status');
+$headertime = new html_table_cell('Time');
+
+$reportheader = new html_table_row();
+$reportheader->cells = array($headerfirstname, $headerlastname, $headerstatus, $headertime);
+
+$reporttable->data[] = $reportheader;
+
+$statusnames = ['Absent', 'Present'];
+foreach ($attendancedata as $data) {
+    $name = $DB->get_record('user', array('id' => $data->userid), 'firstname, lastname');
+    $firstname = $name->firstname;
+    $lastname = $name->lastname;
+    $status = $statusnames[$data->status];
+    $time = date("H:i:s", $data->timestamp);
+
+    $reportdata = array($firstname, $lastname, $status, $time);
+    $reporttable->data[] = $reportdata;
+}
+echo html_writer::table($reporttable);
 
 echo $OUTPUT->footer();
