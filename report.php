@@ -23,8 +23,10 @@
  */
 
 require_once(__DIR__ . '/../../config.php');
+require_once($CFG->dirroot . '/lib/tablelib.php');
 
 $id = optional_param('id', 0, PARAM_INT); // Course Module ID, or ...
+$download = optional_param('download', '', PARAM_ALPHA);
 
 if ($id) {
     if (!$cm = get_coursemodule_from_id('testattendance', $id)) {
@@ -40,39 +42,45 @@ require_login($course, false, $cm);
 $context = context_module::instance($cm->id);
 require_capability('mod/testattendance:report', $context);
 
-$PAGE->set_url('/mod/testattendance/report.php');
+$baseurl = new moodle_url('/mod/testattendance/report.php', array('id' => $cm->id));
+$PAGE->set_url($baseurl);
 $PAGE->set_title(get_string('pluginname', 'testattendance'));
 $PAGE->set_heading(get_string('pluginname', 'testattendance'));
 
-$attendancedata = $DB->get_records('testattendance_logs', array('attendanceid' => $cm->instance), '', '*');
-
-$reporttable = new html_table();
+$attendancedata = $DB->get_records('testattendance_logs', array('attendanceid' => $cm->instance), 'timestamp DESC', '*');
 
 echo $OUTPUT->header();
 
 echo $OUTPUT->heading("REPORT");
 
-$headerfirstname = new html_table_cell('First Name');
-$headerlastname = new html_table_cell('Last Name');
-$headerstatus = new html_table_cell('Status');
-$headertime = new html_table_cell('Time');
-
-$reportheader = new html_table_row();
-$reportheader->cells = array($headerfirstname, $headerlastname, $headerstatus, $headertime);
-
-$reporttable->data[] = $reportheader;
-
 $statusnames = ['Absent', 'Present'];
-foreach ($attendancedata as $data) {
+
+$table = new flexible_table('attendance-report');
+$table->define_columns(['firstname', 'lastname', 'time', 'status']);
+$table->define_headers(['First Name', 'Last Name', 'Time', 'Status']);
+$table->define_baseurl($baseurl);
+
+$table->setup();
+
+$table->sortable(true, 'time', SORT_DESC);
+$table->set_control_variables(array(
+        TABLE_VAR_SORT    => 'tsort',
+        TABLE_VAR_PAGE    => 'tpage',
+        TABLE_VAR_DIR    => 'tdir'
+));
+$sortcolumns = $table->get_sort_columns();
+
+foreach ($attendancedata as $index => $data) {
     $name = $DB->get_record('user', array('id' => $data->userid), 'firstname, lastname');
     $firstname = $name->firstname;
     $lastname = $name->lastname;
     $status = $statusnames[$data->status];
-    $time = date("H:i:s", $data->timestamp);
+    $time = date("d/m/Y H:i:s", $data->timestamp);
 
-    $reportdata = array($firstname, $lastname, $status, $time);
-    $reporttable->data[] = $reportdata;
+    $reportdata = array($firstname, $lastname, $time, $status);
+    $table->add_data($reportdata);
 }
-echo html_writer::table($reporttable);
+
+$table->print_html();
 
 echo $OUTPUT->footer();
