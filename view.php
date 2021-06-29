@@ -87,7 +87,7 @@ if (has_capability('mod/testattendance:report', $context)) {
 
 if (has_capability('mod/testattendance:submit', $context)) {
     $now = time();
-    if ($now >= $attendancetimeopen and $now < $attendancetimeopen) {
+    if ($now >= $attendancetimeopen and $now < $attendancetimeclose) {
         echo html_writer::tag('a', "Take attendance", [
             'href' => $submissionurl,
             'class' => "btn btn-primary",
