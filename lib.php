@@ -45,7 +45,7 @@ function testattendance_add_instance($testattendance) {
         $data->attendanceid = $testattendance->id;
         $data->userid = $user->id;
         $data->status = 0;
-        $data->timestamp = '';
+        $data->timestamp = null;
 
         $dataobjects[] = $data;
     }

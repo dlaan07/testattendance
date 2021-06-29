@@ -75,7 +75,11 @@ foreach ($attendancedata as $index => $data) {
     $firstname = $name->firstname;
     $lastname = $name->lastname;
     $status = $statusnames[$data->status];
-    $time = date("d/m/Y H:i:s", $data->timestamp);
+    if (is_null($data->timestamp)) {
+        $time = '';
+    } else {
+        $time = date("d/m/Y H:i:s", $data->timestamp);
+    }
 
     $reportdata = array($firstname, $lastname, $time, $status);
     $table->add_data($reportdata);
