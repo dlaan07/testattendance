@@ -49,18 +49,19 @@ $PAGE->set_url('/mod/testattendance/submission.php');
 $PAGE->set_title(get_string('pluginname', 'testattendance'));
 $PAGE->set_heading(get_string('pluginname', 'testattendance'));
 
-//Check for existing attendance
+// Check for existing attendance.
 
 $doesattendanceexist = $DB->record_exists('testattendance_logs', array('userid' => $USER->id));
-if (!$doesattendanceexist) {
-    //Insert data to DB
+
+$previouslog = $DB->get_record('testattendance_logs', array('userid' => $USER->id), 'id status', MUST_EXIST);
+if (!$doesattendanceexist and is_null($previouslog)) {
+    // Update attendance log to DB.
     $record = new stdClass();
-    $record->attendanceid = $attendanceid;
-    $record->userid = $USER->id;
+    $record->id = $previouslog->id;
     $record->status = 1;
     $record->timestamp = time();
 
-    $DB->insert_record('testattendance_logs', $record);
+    $DB->update_record('testattendance_logs', $record);
 }
 
 echo $OUTPUT->header();
