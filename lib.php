@@ -36,14 +36,16 @@ function testattendance_add_instance($testattendance) {
     // Get enrolled users.
     $courseid = $COURSE->id;
     $context = context_course::instance($courseid);
-    $users = get_enrolled_users($context,  $withcapability = 'mod/testattendance:submit',  $groupid = 0,  $userfields = 'u.id',  $orderby = '',  $limitfrom = 0,  $limitnum = 0);
-
+    $users = get_enrolled_users($context,  $withcapability = 'mod/testattendance:submit',  $groupid = 0,  $userfields = 'u.id, u.firstname, u.lastname',  $orderby = '',  $limitfrom = 0,  $limitnum = 0);
+    // print_r($users);
     // Make all enrolled users attendance default status to absent.
     $dataobjects = array();
     foreach ($users as $user) {
         $data = new stdClass();
         $data->attendanceid = $testattendance->id;
         $data->userid = $user->id;
+        $data->firstname = $user->firstname;
+        $data->lastname = $user->lastname;
         $data->status = 0;
         $data->timestamp = null;
 

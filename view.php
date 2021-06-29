@@ -87,7 +87,7 @@ if (has_capability('mod/testattendance:report', $context)) {
 if (has_capability('mod/testattendance:submit', $context)) {
     // $doeslogexist = $DB->record_exists('testattendance_logs', array('userid' => $USER->id));
 
-    $studentlog = $DB->get_record('testattendance_logs', array('userid' => $USER->id), 'status, timestamp');
+    $studentlog = $DB->get_record('testattendance_logs', array('userid' => $USER->id, 'attendanceid' => $attendanceid), 'id, status, timestamp');
     $studentlogtime = date('d/m/Y H:i:s', $studentlog->timestamp);
     $now = time();
     if ($studentlog->status != 0) {

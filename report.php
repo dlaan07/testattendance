@@ -71,9 +71,9 @@ $table->set_control_variables(array(
 $sortcolumns = $table->get_sort_columns();
 
 foreach ($attendancedata as $index => $data) {
-    $name = $DB->get_record('user', array('id' => $data->userid), 'firstname, lastname');
-    $firstname = $name->firstname;
-    $lastname = $name->lastname;
+    // $name = $DB->get_record('user', array('id' => $data->userid), 'firstname, lastname');
+    $firstname = $data->firstname;
+    $lastname = $data->lastname;
     $status = $statusnames[$data->status];
     if (is_null($data->timestamp)) {
         $time = '';

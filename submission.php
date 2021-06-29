@@ -53,8 +53,9 @@ $PAGE->set_heading(get_string('pluginname', 'testattendance'));
 
 $doesattendanceexist = $DB->record_exists('testattendance_logs', array('userid' => $USER->id));
 
-$previouslog = $DB->get_record('testattendance_logs', array('userid' => $USER->id), 'id status', MUST_EXIST);
-if (!$doesattendanceexist and is_null($previouslog)) {
+$previouslog = $DB->get_record('testattendance_logs', array('userid' => $USER->id, 'attendanceid' => $attendanceid), 'id, timestamp', MUST_EXIST);
+
+if ($doesattendanceexist and is_null($previouslog->timestamp)) {
     // Update attendance log to DB.
     $record = new stdClass();
     $record->id = $previouslog->id;
@@ -68,7 +69,7 @@ echo $OUTPUT->header();
 
 echo $OUTPUT->heading("SUBMISSION");
 
-if (!$doesattendanceexist) {
+if ($doesattendanceexist and is_null($previouslog->timestamp)) {
     echo html_writer::tag('p', 'You haven\'t taken this attendance yet, click the button below to submit your attendance now.');
     echo html_writer::tag('a', 'Submit attendance', [
         'href' => '',
@@ -82,8 +83,8 @@ if (!$doesattendanceexist) {
         'class' => 'btn btn-danger',
     ]);
 }
-echo html_writer::tag('a', 'Back to course', [
-        'href' => new moodle_url('/course/view.php', ['id' => $course->id]),
+echo html_writer::tag('a', 'Back', [
+        'href' => new moodle_url('/mod/testattendance/view.php', ['id' => $id]),
         'class' => 'btn btn-secondary',
 ]);
 echo $OUTPUT->footer();
