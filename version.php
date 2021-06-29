@@ -25,4 +25,4 @@
 defined('MOODLE_INTERNAL') || die();
 
 $plugin->component = 'mod_testattendance';
-$plugin->version = 2021060900;
+$plugin->version = 2021061000;
