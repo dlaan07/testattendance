@@ -69,9 +69,8 @@ echo $OUTPUT->heading($attendance->name);
 echo html_writer::tag('p', $attendance->intro);
 
 if (has_capability('mod/testattendance:report', $context)) {
-    $doeslogexist = $DB->record_exists('testattendance_logs', array('attendanceid' => $attendanceid));
-    // $doeslogexist = false;
-    if ($doeslogexist) {
+    $doesreportexist = $DB->record_exists('testattendance_logs', array('attendanceid' => $attendanceid));
+    if ($doesreportexist) {
         $presents = $DB->get_records('testattendance_logs', array('attendanceid' => $attendanceid, 'status' => 1), '', '*');
         $absents = $DB->get_records('testattendance_logs', array('attendanceid' => $attendanceid, 'status' => 0), '', '*');
         echo html_writer::tag('p', 'Absent: '.count($absents));
@@ -86,18 +85,30 @@ if (has_capability('mod/testattendance:report', $context)) {
 }
 
 if (has_capability('mod/testattendance:submit', $context)) {
+    // $doeslogexist = $DB->record_exists('testattendance_logs', array('userid' => $USER->id));
+
+    $studentlog = $DB->get_record('testattendance_logs', array('userid' => $USER->id), 'status, timestamp');
+    $studentlogtime = date('d/m/Y H:i:s', $studentlog->timestamp);
     $now = time();
-    if ($now >= $attendancetimeopen and $now < $attendancetimeclose) {
-        echo html_writer::tag('a', "Take attendance", [
+    if ($studentlog->status != 0) {
+        echo html_writer::tag('p', 'You have taken this attendance on ' . $studentlogtime);
+        echo html_writer::tag('a', "View attendance", [
             'href' => $submissionurl,
             'class' => "btn btn-primary",
         ]);
     } else {
-        echo html_writer::tag('p', 'This attendance has been closed');
-        echo html_writer::tag('a', "Take attendance", [
-            'href' => $submissionurl,
-            'class' => "disabled btn btn-primary",
-        ]);
+        if ($now >= $attendancetimeopen and $now < $attendancetimeclose) {
+            echo html_writer::tag('a', "Take attendance", [
+                'href' => $submissionurl,
+                'class' => "btn btn-primary",
+            ]);
+        } else {
+            echo html_writer::tag('p', 'This attendance has been closed');
+            echo html_writer::tag('a', "Take attendance", [
+                'href' => $submissionurl,
+                'class' => "disabled btn btn-primary",
+            ]);
+        }
     }
 }
 
