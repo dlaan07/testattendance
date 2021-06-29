@@ -29,16 +29,16 @@ function testattendance_add_instance($testattendance) {
     global $DB;
     global $COURSE;
 
-    // Get time now and insert to DB
+    // Get time now and insert to DB.
     $testattendance->timemodified = time();
     $testattendance->id = $DB->insert_record('testattendance', $testattendance);
 
-    // Get enrolled users
+    // Get enrolled users.
     $courseid = $COURSE->id;
     $context = context_course::instance($courseid);
     $users = get_enrolled_users($context,  $withcapability = 'mod/testattendance:submit',  $groupid = 0,  $userfields = 'u.id',  $orderby = '',  $limitfrom = 0,  $limitnum = 0);
 
-    // Default all enrolled users attendance status to absent
+    // Make all enrolled users attendance default status to absent.
     $dataobjects = array();
     foreach ($users as $user) {
         $data = new stdClass();
