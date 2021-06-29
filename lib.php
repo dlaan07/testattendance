@@ -23,12 +23,33 @@
  */
 
 defined('MOODLE_INTERNAL') || die();
+require_once($CFG->dirroot.'/lib/enrollib.php');
 
 function testattendance_add_instance($testattendance) {
     global $DB;
+    global $COURSE;
 
+    // Get time now and insert to DB
     $testattendance->timemodified = time();
     $testattendance->id = $DB->insert_record('testattendance', $testattendance);
+
+    // Get enrolled users
+    $courseid = $COURSE->id;
+    $context = context_course::instance($courseid);
+    $users = get_enrolled_users($context,  $withcapability = 'mod/testattendance:submit',  $groupid = 0,  $userfields = 'u.id',  $orderby = '',  $limitfrom = 0,  $limitnum = 0);
+
+    // Default all enrolled users attendance status to absent
+    $dataobjects = array();
+    foreach ($users as $user) {
+        $data = new stdClass();
+        $data->attendanceid = $testattendance->id;
+        $data->userid = $user->id;
+        $data->status = 0;
+        $data->timestamp = '';
+
+        $dataobjects[] = $data;
+    }
+    $DB->insert_records('testattendance_logs', $dataobjects);
 
     return $testattendance->id;
 }

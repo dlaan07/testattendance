@@ -73,7 +73,8 @@ if (has_capability('mod/testattendance:report', $context)) {
     // $doeslogexist = false;
     if ($doeslogexist) {
         $presents = $DB->get_records('testattendance_logs', array('attendanceid' => $attendanceid, 'status' => 1), '', '*');
-        echo html_writer::tag('p', 'Absent:');
+        $absents = $DB->get_records('testattendance_logs', array('attendanceid' => $attendanceid, 'status' => 0), '', '*');
+        echo html_writer::tag('p', 'Absent: '.count($absents));
         echo html_writer::tag('p', 'Present: '.count($presents));
         echo html_writer::tag('a', "View Report", [
             'href' => $reporturl,
