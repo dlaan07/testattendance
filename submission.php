@@ -68,10 +68,6 @@ echo $OUTPUT->header();
 
 echo $OUTPUT->heading("SUBMISSION");
 
-echo $USER->id;
-echo $doesattendanceexist;
-echo $course->id;
-
 if (!$doesattendanceexist) {
     echo html_writer::tag('p', 'You haven\'t taken this attendance yet, click the button below to submit your attendance now.');
     echo html_writer::tag('a', 'Submit attendance', [
