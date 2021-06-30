@@ -70,3 +70,12 @@ function testattendance_update_instance($testattendance) {
 
     return true;
 }
+
+function testattendance_delete_instance($id) {
+    global $DB;
+
+    $DB->delete_records('testattendance_logs', array('attendanceid' => $id));
+    $DB->delete_records('testattendance', array('id' => $id));
+
+    return true;
+}
