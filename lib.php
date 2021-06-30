@@ -58,7 +58,6 @@ function testattendance_add_instance($testattendance) {
 
 function testattendance_update_instance($testattendance) {
     global $DB;
-    global $COURSE;
 
     $updatedata = new stdClass();
     $updatedata->id = $testattendance->instance;
