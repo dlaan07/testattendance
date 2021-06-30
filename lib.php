@@ -18,7 +18,7 @@
  * File.
  *
  * @package    core
- * @copyright  2021 
+ * @copyright  2021
  * @license    http://www.gnu.org/copyleft/gpl.html GNU GPL v3 or later
  */
 
@@ -37,8 +37,8 @@ function testattendance_add_instance($testattendance) {
     $courseid = $COURSE->id;
     $context = context_course::instance($courseid);
     $users = get_enrolled_users($context,  $withcapability = 'mod/testattendance:submit',  $groupid = 0,  $userfields = 'u.id, u.firstname, u.lastname',  $orderby = '',  $limitfrom = 0,  $limitnum = 0);
-    // print_r($users);
-    // Make all enrolled users attendance default status to absent.
+
+    // Make all enrolled users attendance status default to absent.
     $dataobjects = array();
     foreach ($users as $user) {
         $data = new stdClass();
@@ -54,4 +54,20 @@ function testattendance_add_instance($testattendance) {
     $DB->insert_records('testattendance_logs', $dataobjects);
 
     return $testattendance->id;
+}
+
+function testattendance_update_instance($testattendance) {
+    global $DB;
+    global $COURSE;
+
+    $updatedata = new stdClass();
+    $updatedata->id = $testattendance->instance;
+    $updatedata->intro = $testattendance->intro;
+    $updatedata->timemodified = time();
+    $updatedata->timeopen = $testattendance->timeopen;
+    $updatedata->timeclose = $testattendance->timeclose;
+
+    $DB->update_record('testattendance', $updatedata);
+
+    return true;
 }
