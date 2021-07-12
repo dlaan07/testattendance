@@ -24,8 +24,8 @@
 require_once(__DIR__ . '/../../config.php');
 require_once($CFG->dirroot . '/mod/testattendance/classes/form/submission_form.php');
 
-$attendanceid = required_param('attendanceid', PARAM_INT); // Course Module ID, or ...
-$id = optional_param('id', 0, PARAM_INT); // Attendance Module ID, or ...
+$attendanceid = required_param('attendanceid', PARAM_INT); // Attendance Module ID.
+$id = optional_param('id', 0, PARAM_INT); // Course Module ID.
 
 if ($id) {
     if (!$cm = get_coursemodule_from_id('testattendance', $id)) {
@@ -56,13 +56,18 @@ $previouslog = $DB->get_record('testattendance_logs', array('userid' => $USER->i
 
 
 
-//Instantiate simplehtml_form
+// Instantiate simplehtml_form.
 $formparameters = ['id' => $id, 'attendanceid' => $attendanceid];
 $mform = new submission_form(null, $formparameters);
 
 $viewurl = new moodle_url('/mod/testattendance/view.php', array('id' => $id, 'attendanceid' => $attendanceid));
 
-//Form processing and displaying is done here
+// Get attendance time settings.
+$attendance = $DB->get_record('testattendance', array('id' => $attendanceid), 'timeclose, timetolerance', MUST_EXIST);
+$timeclose = $attendance->timeclose;
+$timetolerance = $attendance->timetolerance;
+
+// Form processing and displaying is done here.
 if ($mform->is_cancelled()) {
     // Handle form cancel operation, if cancel button is present on form.
     redirect($viewurl);
@@ -70,7 +75,12 @@ if ($mform->is_cancelled()) {
     if ($doesattendanceexist and is_null($previouslog->timestamp)) {
         $record = new stdClass();
         $record->id = $previouslog->id;
-        $record->status = 1;
+        if (time() < $timeclose) {
+            $record->status = 1;
+        } else if (time() < $timeclose + $timetolerance) {
+            $record->status = 2;
+        }
+
         $record->timestamp = time();
 
         $DB->update_record('testattendance_logs', $record);

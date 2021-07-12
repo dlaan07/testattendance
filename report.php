@@ -53,7 +53,7 @@ echo $OUTPUT->header();
 
 echo $OUTPUT->heading("REPORT");
 
-$statusnames = ['Absent', 'Present'];
+$statusnames = ['Absent', 'Present', 'Late'];
 
 $table = new flexible_table('attendance-report');
 $table->define_columns(['firstname', 'lastname', 'time', 'status']);

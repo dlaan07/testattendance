@@ -44,8 +44,9 @@ if ($id) {
 
 $attendance = $DB->get_record('testattendance', array('id' => $cm->instance), '*', MUST_EXIST);
 $attendanceid = $attendance->id;
-$attendancetimeopen = $attendance->timeopen;
-$attendancetimeclose = $attendance->timeclose;
+$timeopen = $attendance->timeopen;
+$timeclose = $attendance->timeclose;
+$timetolerance = $attendance->timetolerance;
 
 // Check login and get context.
 require_login($course, false, $cm);
@@ -68,13 +69,22 @@ echo $OUTPUT->header();
 echo $OUTPUT->heading($attendance->name);
 echo html_writer::tag('p', $attendance->intro);
 
+$timeopendisplay = date("d/m/Y H:i:s", $timeopen);
+$timeclosedisplay = date("d/m/Y H:i:s", $timeclose);
+$timetolerancedisplay = $timetolerance / 60;
+echo html_writer::tag('p', 'This attendance opened on : '.$timeopendisplay);
+echo html_writer::tag('p', 'This attendance closed on : '.$timeclosedisplay);
+echo html_writer::tag('p', 'Tolerance duration for this attendance: '.$timetolerancedisplay." minutes");
+
 if (has_capability('mod/testattendance:report', $context)) {
     $doesreportexist = $DB->record_exists('testattendance_logs', array('attendanceid' => $attendanceid));
     if ($doesreportexist) {
-        $presents = $DB->get_records('testattendance_logs', array('attendanceid' => $attendanceid, 'status' => 1), '', '*');
         $absents = $DB->get_records('testattendance_logs', array('attendanceid' => $attendanceid, 'status' => 0), '', '*');
+        $presents = $DB->get_records('testattendance_logs', array('attendanceid' => $attendanceid, 'status' => 1), '', '*');
+        $lates = $DB->get_records('testattendance_logs', array('attendanceid' => $attendanceid, 'status' => 2), '', '*');
         echo html_writer::tag('p', 'Absent: '.count($absents));
         echo html_writer::tag('p', 'Present: '.count($presents));
+        echo html_writer::tag('p', 'Late: '.count($lates));
         echo html_writer::tag('a', "View Report", [
             'href' => $reporturl,
             'class' => "btn btn-primary",
@@ -97,7 +107,7 @@ if (has_capability('mod/testattendance:submit', $context)) {
             'class' => "btn btn-primary",
         ]);
     } else {
-        if ($now >= $attendancetimeopen and $now < $attendancetimeclose) {
+        if ($now >= $timeopen and $now < $timeclose + $timetolerance) {
             echo html_writer::tag('a', "Take attendance", [
                 'href' => $submissionurl,
                 'class' => "btn btn-primary",
