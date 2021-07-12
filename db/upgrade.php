@@ -154,7 +154,6 @@ function xmldb_testattendance_upgrade($oldversion) {
         $table->add_field('introformat', XMLDB_TYPE_INTEGER, '4', null, null, null, null);
         $table->add_field('timeopen', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
         $table->add_field('timeclose', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
-        $table->add_field('timetoleranceallow', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null);
         $table->add_field('timetolerance', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
 
         // Adding keys to table testattendance.
@@ -165,7 +164,7 @@ function xmldb_testattendance_upgrade($oldversion) {
         if (!$dbman->table_exists($table)) {
             $dbman->create_table($table);
         }
-
+        
         // Testattendance savepoint reached.
         upgrade_mod_savepoint(true, 2021061100, 'testattendance');
     }
