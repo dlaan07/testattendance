@@ -53,6 +53,10 @@ class mod_testattendance_mod_form extends moodleform_mod {
         $mform->addHelpButton('timeclose', 'timeopenclose', 'testattendance');
         $mform->addRule('timeclose', null, 'required');
 
+        $mform->addElement('duration', 'timetolerance', get_string('timetolerance', 'testattendance'),
+                array('optional' => true));
+        $mform->addHelpButton('timetolerance', 'timetolerance', 'testattendance');
+
         // $mform->addElement('duration', 'timelimit', get_string('timelimit', 'quiz'),
         //         array('optional' => true));
         // $mform->addHelpButton('timelimit', 'timelimit', 'quiz');

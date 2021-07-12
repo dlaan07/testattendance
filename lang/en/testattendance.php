@@ -35,5 +35,7 @@ $string['timeopen'] = "Open the attendance";
 $string['timeclose'] = "Close the attendance";
 $string['timeopenclose'] = "Time to open and close attendance";
 $string['timeopenclose_help'] = "Students must fill the attendance between open and close times. Students will be unable to take attendance after close time.";
+$string['timetolerance'] = "Tolerance time";
+$string['timetolerance_help'] = "Allow students to submit attendance after closing time. Any attendance within this duration will be considered late.";
 
 $string['pluginadministration'] = 'Test Attendance administration';
