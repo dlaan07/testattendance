@@ -140,5 +140,36 @@ function xmldb_testattendance_upgrade($oldversion) {
         upgrade_mod_savepoint(true, 2021061000, 'testattendance');
     }
 
+    if ($oldversion < 2021061100) {
+
+        // Define table testattendance to be created.
+        $table = new xmldb_table('testattendance');
+
+        // Adding fields to table testattendance.
+        $table->add_field('id', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, XMLDB_SEQUENCE, null);
+        $table->add_field('course', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('name', XMLDB_TYPE_CHAR, '255', null, null, null, null);
+        $table->add_field('timemodified', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+        $table->add_field('intro', XMLDB_TYPE_TEXT, null, null, null, null, null);
+        $table->add_field('introformat', XMLDB_TYPE_INTEGER, '4', null, null, null, null);
+        $table->add_field('timeopen', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timeclose', XMLDB_TYPE_INTEGER, '10', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timetoleranceallow', XMLDB_TYPE_INTEGER, '1', null, XMLDB_NOTNULL, null, null);
+        $table->add_field('timetolerance', XMLDB_TYPE_INTEGER, '10', null, null, null, null);
+
+        // Adding keys to table testattendance.
+        $table->add_key('primary', XMLDB_KEY_PRIMARY, ['id']);
+        $table->add_key('course', XMLDB_KEY_FOREIGN, ['course'], 'course', ['id']);
+
+        // Conditionally launch create table for testattendance.
+        if (!$dbman->table_exists($table)) {
+            $dbman->create_table($table);
+        }
+
+        // Testattendance savepoint reached.
+        upgrade_mod_savepoint(true, 2021061100, 'testattendance');
+    }
+
+
     return $result;
 }
